@@ -139,6 +139,7 @@ if prompt := st.chat_input("Company or industry?"):
         st.markdown(response)
         st.markdown("Datasets for Use Case")
         st.markdown(response_links)
+        st.download_button("Download Dataset Ref File", response_links, file_name="dataset_ref.txt", mime="text/plain")
 
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": response})
