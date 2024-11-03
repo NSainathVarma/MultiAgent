@@ -123,7 +123,7 @@ if prompt := st.chat_input("Company or industry?"):
         research=tavilysearch(prompt,determine(prompt))
         response=geminillm(research)
 
-        dataset_text=text_for_dataset(prompt)
+        dataset_text=text_for_dataset(response)
         links=dataset_links(dataset_text)
 
         response_links = ""
