@@ -62,13 +62,11 @@ def dataset_links(text):
     # Fetch datasets using the Kaggle API
     for i in k:
         datasets = api.dataset_list(search=i, sort_by='hottest')
-        appe=[]
         for dataset in datasets[:2]:
             name = dataset.ref  # Reference to the dataset
             title = dataset.title  # Title of the dataset
             url = f"https://www.kaggle.com/datasets/{name}"  # URL to access the dataset
-            appe.append((title, url))
-        result.append(appe)
+            result.append((title, url))
     return result
 
 def determine(text):
@@ -130,9 +128,8 @@ if prompt := st.chat_input("Company or industry?"):
 
         response_links = ""
 
-        for link in links:
-            for title, url in link:
-                response_links = response_links + f"- {title}: {url}" + "\n"
+        for title, url in links:
+            response_links = response_links + f"- {title}: {url}" + "\n"
 
     
     with st.chat_message("assistant"):
