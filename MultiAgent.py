@@ -51,23 +51,45 @@ def text_for_dataset(text):
     return gen_res.text
 
 def dataset_links(text):
-    k=text.split("\n")
-    k.remove("")
-    for i in range(len(k)):
-        k[i]=k[i].split(". ")[1]
+    # k=text.split("\n")
+    # k.remove("")
+    # for i in range(len(k)):
+    #     k[i]=k[i].split(". ")[1]
+    # api = KaggleApi()
+    # api.authenticate()  # Authenticate the API
+    # result = []
+
+    # # Fetch datasets using the Kaggle API
+    # for i in k:
+    #     datasets = api.dataset_list(search=i, sort_by='hottest')
+    #     for dataset in datasets[:2]:
+    #         name = dataset.ref  # Reference to the dataset
+    #         title = dataset.title  # Title of the dataset
+    #         url = f"https://www.kaggle.com/datasets/{name}"  # URL to access the dataset
+    #         result.append((title, url))
+    # return result
+    use_cases = [line for line in text.split("\n") if line.strip() != ""]
+    datasets_grouped = {}
+
     api = KaggleApi()
     api.authenticate()  # Authenticate the API
-    result = []
 
-    # Fetch datasets using the Kaggle API
-    for i in k:
-        datasets = api.dataset_list(search=i, sort_by='hottest')
-        for dataset in datasets[:2]:
-            name = dataset.ref  # Reference to the dataset
-            title = dataset.title  # Title of the dataset
-            url = f"https://www.kaggle.com/datasets/{name}"  # URL to access the dataset
-            result.append((title, url))
-    return result
+    for use_case in use_cases:
+        if ". " in use_case:
+            index, heading = use_case.split(". ", 1)
+        else:
+            heading = use_case
+        heading = heading.strip()
+        datasets = api.dataset_list(search=heading, sort_by='hottest')
+
+        dataset_info = []
+        for dataset in datasets[:2]:  # Get top 2 datasets
+            name = dataset.ref
+            title = dataset.title
+            url = f"https://www.kaggle.com/datasets/{name}"
+            dataset_info.append((title, url))
+
+        datasets_grouped[heading] = dataset_info
 
 def determine(text):
     fields = [
@@ -126,14 +148,23 @@ if prompt := st.chat_input("Company or industry?"):
         dataset_text=text_for_dataset(response)
         links=dataset_links(dataset_text)
 
-        response_links = ""
+        # response_links = ""
 
-        for title, url in links:
-            response_links = response_links + f"- {title}: {url}" + "\n"
+        # for title, url in links:
+        #     response_links = response_links + f"- {title}: {url}" + "\n"
+        response_links = ""
+        for heading, datasets in links.items():
+            response_links += f"### {heading}\n"
+            for title, url in datasets:
+                response_links += f"- [{title}]({url})\n"
+            response_links += "\n"
 
     
     with st.chat_message("assistant"):
-        st.markdown(response + "\nDatasets for Use Case\n"+ response_links)
+        # st.markdown(response + "\nDatasets for Use Case\n"+ response_links)
+        st.markdown(response)
+        st.markdown("### Datasets for Use Case")
+        st.markdown(response_links, unsafe_allow_html=True)
         st.download_button("Download Dataset Ref File", response_links, file_name="dataset_ref.txt", mime="text/plain")
 
     # Add assistant response to chat history
