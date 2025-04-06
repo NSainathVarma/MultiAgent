@@ -81,15 +81,17 @@ def dataset_links(text):
             heading = use_case
         heading = heading.strip()
         datasets = api.dataset_list(search=heading, sort_by='hottest')
-
-        dataset_info = []
-        for dataset in datasets[:2]:  # Get top 2 datasets
-            name = dataset.ref
-            title = dataset.title
-            url = f"https://www.kaggle.com/datasets/{name}"
-            dataset_info.append((title, url))
-
-        datasets_grouped[heading] = dataset_info
+        if len(datasets)==0:
+            dataset_info="Dataset has to be made by your own"
+        else:
+            dataset_info = []
+            for dataset in datasets[:2]:  # Get top 2 datasets
+                name = dataset.ref
+                title = dataset.title
+                url = f"https://www.kaggle.com/datasets/{name}"
+                dataset_info.append((title, url))
+    
+            datasets_grouped[heading] = dataset_info
     return datasets_grouped
 
 def determine(text):
@@ -156,9 +158,12 @@ if prompt := st.chat_input("Company or industry?"):
         response_links = ""
         for heading, datasets in links.items():
             response_links += f"### {heading}\n"
-            for title, url in datasets:
-                response_links += f"- [{title}]({url})\n"
-            response_links += "\n"
+            if isinstance(datasets,list):
+                for title, url in datasets:
+                    response_links += f"- [{title}]({url})\n"
+                response_links += "\n"
+            else:
+                response_link+= datasets+"\n"
 
     
     with st.chat_message("assistant"):
