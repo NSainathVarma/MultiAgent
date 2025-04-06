@@ -90,6 +90,7 @@ def dataset_links(text):
             dataset_info.append((title, url))
 
         datasets_grouped[heading] = dataset_info
+    return datasets_grouped
 
 def determine(text):
     fields = [
