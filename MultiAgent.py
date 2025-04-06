@@ -163,7 +163,7 @@ if prompt := st.chat_input("Company or industry?"):
                     response_links += f"- [{title}]({url})\n"
                 response_links += "\n"
             else:
-                response_link+= datasets+"\n"
+                response_links+= datasets+"\n"
 
     
     with st.chat_message("assistant"):
