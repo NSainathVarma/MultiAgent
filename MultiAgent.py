@@ -91,7 +91,7 @@ def dataset_links(text):
                 url = f"https://www.kaggle.com/datasets/{name}"
                 dataset_info.append((title, url))
     
-            datasets_grouped[heading] = dataset_info
+        datasets_grouped[heading] = dataset_info
     return datasets_grouped
 
 def determine(text):
